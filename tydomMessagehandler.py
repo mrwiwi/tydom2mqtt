@@ -171,6 +171,7 @@ class TydomMessageHandler():
                         print()
                         print(json.dumps(parsed, sort_keys=True, indent=4, separators=(',', ': ')))
                 except Exception as e:
+                    print(msg_type)
                     print('Cannot parse response !')
                     # print('Response :')
                     # print(data)
@@ -221,7 +222,7 @@ class TydomMessageHandler():
                         device_id = i["id"]
                         endpoint_id = endpoint["id"]
                         name_of_id = self.get_name_from_id(endpoint_id)
-                        type_of_id = self.get_type_from_id(endpoint_id)
+                        type_of_id = self.get_type_from_id(device_id)
 
                         _LOGGER.debug("======[ DEVICE INFOS ]======")
                         _LOGGER.debug("ID {}".format(device_id))
