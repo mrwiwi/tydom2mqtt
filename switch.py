@@ -3,42 +3,39 @@ import time
 from datetime import datetime
 from sensors import sensor
 
-#switch_position_topic = "switch/tydom/{id}/current_position"
 switch_config_topic = "homeassistant/switch/tydom/{id}/config"
-switch_state_topic = "sensor/tydom/{id}/state"
-switch_command_topic = "switch/tydom/{id}/set_state"
+switch_state_topic = "switch/tydom/{id}/state"
 switch_attributes_topic = "switch/tydom/{id}/attributes"
+switch_command_topic = "switch/tydom/{id}/set_levelCmdGate"
+switch_level_topic = "switch/tydom/{id}/current_level"
+switch_set_level_topic = "switch/tydom/{id}/set_levelGate"
+
+
+
 
 
 class Switch:
-    def __init__(self, tydom_attributes, set_state=None, mqtt=None):
+    def __init__(self, tydom_attributes, set_level=None, mqtt=None):
         self.attributes = tydom_attributes
         self.device_id = self.attributes['device_id']
         self.endpoint_id = self.attributes['endpoint_id']
         self.id = self.attributes['id']
         self.name = self.attributes['switch_name']
+
         try:
-            self.current_state = self.attributes['state']
+            self.current_level = self.attributes['level']
         except Exception as e:
             print(e)
-            self.current_state = None
-        #self.set_position = set_position
+            self.current_level = None
+        self.set_level = set_level
+
+        #try:
+        #    self.current_state = self.attributes['state']
+        #except Exception as e:
+        #    print(e)
+        #    self.current_state = 'On'
         self.mqtt = mqtt
 
-    # def id(self):
-    #     return self.id
-
-    # def name(self):
-    #     return self.name
-
-    # def current_position(self):
-    #     return self.current_position
-
-    # def set_position(self):
-    #     return self.set_position
-
-    # def attributes(self):
-    #     return self.attributes
 
     async def setup(self):
         #availability:
@@ -57,13 +54,10 @@ class Switch:
         # self.config['attributes'] = self.attributes
         self.config['command_topic'] = switch_command_topic.format(id=self.id)
         self.config['state_topic'] = switch_state_topic.format(id=self.id)
-        #self.config['position_topic'] = switch_position_topic.format(id=self.id)
         self.config['json_attributes_topic'] = switch_attributes_topic.format(id=self.id)
 
-        self.config['payload_on'] = "On"
-        self.config['payload_off'] = "Off"
-        self.config['state_on'] = "On"
-        self.config['state_ff'] = "Off"
+        self.config['payload_on'] = "TOGGLE"
+        self.config['payload_off'] = "TOGGLE"
         #self.config['optimistic'] = 'false'
         self.config['retain'] = 'false'
         self.config['device'] = self.device
@@ -84,13 +78,13 @@ class Switch:
             print(e)
 
 
-        self.state_topic = switch_state_topic.format(id=self.id, state=self.current_state)
-        #self.position_topic = switch_position_topic.format(id=self.id, current_position=self.current_position)
+        self.level_topic = switch_state_topic.format(id=self.id, current_level=self.current_level)
 
         if (self.mqtt != None):
-            self.mqtt.mqtt_client.publish(self.state_topic, self.current_state, qos=0, retain=True) #Switch State
+            self.mqtt.mqtt_client.publish(self.level_topic, self.current_level, qos=0, retain=True) #Switch State
             self.mqtt.mqtt_client.publish(self.config['json_attributes_topic'], self.attributes, qos=0)
-        print("Switch created / updated : ", self.name, self.id, self.current_state)
+        print("Switch created / updated : ", self.name, self.id, self.current_level)
+
 
         # update_pub = '(self.position_topic, self.current_position, qos=0, retain=True)'
         # return(update_pub)
@@ -108,7 +102,13 @@ class Switch:
     # def __init__(self, name, elem_name, tydom_attributes_payload, attributes_topic_from_device, mqtt=None):
 
 
-    async def put_switch_state(tydom_client, device_id, switch_id, state):
-        print(switch_id, 'state', state)
-        if not (state == ''):
-            await tydom_client.put_devices_data(device_id, switch_id, 'state', state)
+
+    async def put_levelGate(tydom_client, device_id, switch_id, level):
+        print(switch_id, 'level', level)
+        if not (level == ''):
+            await tydom_client.put_devices_data(device_id, switch_id, 'level', level)
+
+    async def put_levelCmdGate(tydom_client, device_id, switch_id, levelCmd):
+        print(switch_id, 'levelCmd', levelCmd)
+        if not (levelCmd == ''):
+            await tydom_client.put_devices_data(device_id, switch_id, 'levelCmd', levelCmd)

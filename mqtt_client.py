@@ -134,7 +134,7 @@ class MQTT_Hassio():
             await Cover.put_position(tydom_client=self.tydom, device_id=device_id, cover_id=endpoint_id, position=str(value))
 
         elif 'set_levelCmd' in str(topic):
-            print('Incoming MQTT set_positionCmd request : ', topic, payload)
+            print('Incoming MQTT set_levelCmd request : ', topic, payload)
             value = str(payload).strip('b').strip("'")
 
             get_id = (topic.split("/"))[2]  # extract ids from mqtt
@@ -148,7 +148,7 @@ class MQTT_Hassio():
 
         elif ('set_level' in str(topic)) and not ('set_levelCmd' in str(topic)):
 
-            print('Incoming MQTT set_position request : ', topic, json.loads(payload))
+            print('Incoming MQTT set_level request : ', topic, json.loads(payload))
             value = json.loads(payload)
             # print(value)
             get_id = (topic.split("/"))[2]  # extract ids from mqtt
@@ -213,6 +213,31 @@ class MQTT_Hassio():
             endpoint_id = (get_id.split("_"))[1] #extract id from mqtt
 
             await Switch.put_switch_state(tydom_client=self.tydom, device_id=device_id, switch_id=endpoint_id, state=command)
+
+        elif 'set_levelCmdGate' in str(topic):
+            print('Incoming MQTT set_levelCmdGate request : ', topic, payload)
+            value = str(payload).strip('b').strip("'")
+
+            get_id = (topic.split("/"))[2]  # extract ids from mqtt
+            device_id = (get_id.split("_"))[0]  # extract id from mqtt
+            endpoint_id = (get_id.split("_"))[1]  # extract id from mqtt
+
+            print(str(get_id), 'levelCmd', value)
+            await Light.put_levelCmdGate(tydom_client=self.tydom, device_id=device_id, switch_id=endpoint_id,
+                                        levelCmd=str(value))
+
+
+        elif ('set_levelGate' in str(topic)) and not ('set_levelCmd' in str(topic)):
+
+            print('Incoming MQTT set_levelGate request : ', topic, json.loads(payload))
+            value = json.loads(payload)
+            # print(value)
+            get_id = (topic.split("/"))[2]  # extract ids from mqtt
+            device_id = (get_id.split("_"))[0]  # extract id from mqtt
+            endpoint_id = (get_id.split("_"))[1]  # extract id from mqtt
+
+            await Light.put_levelGate(tydom_client=self.tydom, device_id=device_id, switch_id=endpoint_id,
+                                     level=str(value))
 
         else:
             pass
