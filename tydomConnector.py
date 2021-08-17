@@ -118,7 +118,7 @@ class TydomWebSocketClient():
             Connecting to webSocket server
             websockets.client.connect returns a WebSocketClientProtocol, which is used to send and receive messages
         '''
-        self.connection = await websockets.client.connect('wss://{}:443/mediation/client?mac={}&appli=1'.format(self.host, self.mac),
+        self.connection = await websockets.connect('wss://{}:443/mediation/client?mac={}&appli=1'.format(self.host, self.mac),
                                                             extra_headers=websocketHeaders, ssl=websocket_ssl_context, ping_timeout=None)
 
         return self.connection
