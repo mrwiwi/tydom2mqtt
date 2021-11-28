@@ -1,3 +1,18 @@
+This repo is now DEPRECATED ! please migrate @fmartinou's fork : https://github.com/fmartinou/tydom2mqtt
+
+As many of you knew, i created tydom2mqtt for my own needs and with my little skills (i'm a paramedic guys ! :D), i will continue to work on the said fork.
+
+Thanks again to @fmartinou for his help and contributions ! And thanks to all of you who made PRs to keep that project growing !
+
+UPDATED hassio addon : https://github.com/fmartinou/hassio-addons.git
+
+
+
+
+
+
+
+
 # tydom2MQTT
 
 ![Docker pulls](https://img.shields.io/docker/pulls/fmartinou/tydom2mqtt)
